@@ -11,6 +11,11 @@ require "pry"
 require "rspec"
 require "danger"
 require "mocha"
+require "simplecov"
+require "simplecov-console"
+
+SimpleCov.formatter = SimpleCov::Formatter::Console
+SimpleCov.start
 
 if `git remote -v` == ""
   puts "You cannot run tests without setting a local git remote on this repo"
