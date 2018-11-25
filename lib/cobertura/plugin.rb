@@ -1,33 +1,97 @@
+# frozen_string_literal: true
+
 module Danger
-  # This is your plugin class. Any attributes or methods you expose here will
-  # be available from within your Dangerfile.
+  # Show code coverage of modified and added files.
+  # Add warnings if minimum file coverage is not achieved.
   #
-  # To be published on the Danger plugins site, you will need to have
-  # the public interface documented. Danger uses [YARD](http://yardoc.org/)
-  # for generating documentation from your plugin source, and you can verify
-  # by running `danger plugins lint` or `bundle exec rake spec`.
-  #
-  # You should replace these comments with a public description of your library.
-  #
-  # @example Ensure people are well warned about merging on Mondays
-  #
-  #          my_plugin.warn_on_mondays
+  # @example Warn on minimum file coverage of 30% and show all modified files coverage.
+  #       cobertura.report = "path/to/my/report.xml"
+  #       cobertura.warn_if_file_less_than(percentage: 30)
+  #       cobertura.show_coverage
   #
   # @see  Kyaak/danger-cobertura
-  # @tags monday, weekends, time, rattata
+  # @tags cobertura, coverage
   #
   class DangerCobertura < Plugin
+    require_relative "./coverage_item"
+    ERROR_FILE_NOT_SET = "Cobertura file not set. Use 'cobertura.file = \"path/to/my/report.xml\"'."
+    ERROR_FILE_NOT_FOUND = "No file found at %s"
 
-    # An attribute that you can read/write from your Dangerfile
+    # Path to the xml formatted cobertura report.
     #
-    # @return   [Array<String>]
-    attr_accessor :my_attribute
+    # @return   [String]
+    attr_accessor :report
 
-    # A method that you can call from your Dangerfile
-    # @return   [Array<String>]
+    # Warn if a modified file has a lower total coverage than defined.
     #
-    def warn_on_mondays
-      warn 'Trying to merge code on a Monday' if Date.today.wday == 1
+    # @param percentage [Float] The minimum code coverage required for a file.
+    # @return [Array<String>]
+    def warn_if_file_less_than(percentage:)
+      filtered_items.each do |item|
+        next unless item.total_percentage < percentage
+
+        warn "#{item.name} has less than #{percentage}% coverage"
+      end
+    end
+
+    # Show markdown table of modified and added files.
+    #
+    # @return [Array<String>]
+    def show_coverage
+      return if filtered_items.empty?
+
+      line = +"## Code coverage\n"
+      line << "File | Coverage\n"
+      line << "-----|-----\n"
+      filtered_items.each do |item|
+        line << "#{item.name} | #{format('%.2f', item.total_percentage)}\n"
+      end
+      markdown line
+    end
+
+    private
+
+    # Getter for coverage items of targeted files.
+    #
+    # @return [Array<CoverageItem>]
+    def filtered_items
+      @filtered_items ||= coverage_items.select do |item|
+        target_files.include? item.file_name
+      end
+    end
+
+    # A getter for current updated files.
+    #
+    # @return [Array<String>]
+    def target_files
+      @target_files ||= git.modified_files + git.added_files
+    end
+
+    # Parse the defined coverage report file.
+    #
+    # @return [Oga::XML::Document]
+    def parse
+      require "oga"
+      raise ERROR_FILE_NOT_SET if report.nil? || report.empty?
+      raise format(ERROR_FILE_NOT_FOUND, report) unless File.exist?(report)
+
+      Oga.parse_xml(File.read(report))
+    end
+
+    # Get the xml cobertura report.
+    #
+    # @return [Oga::XML::Document]
+    def xml_report
+      @xml_report ||= parse
+    end
+
+    # Getter for all coverage data.
+    #
+    # @return [Array<CoverageItem>]
+    def coverage_items
+      @coverage_items ||= xml_report.xpath("//class").map do |node|
+        CoverageItem.new(node)
+      end
     end
   end
 end

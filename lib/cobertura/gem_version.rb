@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Cobertura
-  VERSION = "0.0.1".freeze
+  VERSION = "1.0.0"
 end

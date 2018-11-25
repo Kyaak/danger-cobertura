@@ -1,4 +1,6 @@
-require File.expand_path("../spec_helper", __FILE__)
+# frozen_string_literal: true
+
+require File.expand_path("spec_helper", __dir__)
 
 module Danger
   describe Danger::DangerCobertura do
@@ -6,41 +8,83 @@ module Danger
       expect(Danger::DangerCobertura.new(nil)).to be_a Danger::Plugin
     end
 
-    #
-    # You should test your custom attributes and methods here
-    #
     describe "with Dangerfile" do
       before do
         @dangerfile = testing_dangerfile
         @my_plugin = @dangerfile.cobertura
-
-        # mock the PR data
-        # you can then use this, eg. github.pr_author, later in the spec
-        json = File.read(File.dirname(__FILE__) + '/support/fixtures/github_pr.json') # example json: `curl https://api.github.com/repos/danger/danger-plugin-template/pulls/18 > github_pr.json`
-        allow(@my_plugin.github).to receive(:pr_json).and_return(json)
+        @my_plugin.report = "#{File.dirname(__FILE__)}/assets/coverage.xml"
+        @dangerfile.git.stubs(:modified_files).returns([])
+        @dangerfile.git.stubs(:added_files).returns([])
       end
 
-      # Some examples for writing tests
-      # You should replace these with your own.
+      describe "warn_if_file_less_than" do
+        it "raises error if file attribute is nil" do
+          @my_plugin.report = nil
+          expect do
+            @my_plugin.warn_if_file_less_than(percentage: 50.0)
+          end.to raise_error(DangerCobertura::ERROR_FILE_NOT_SET)
+        end
 
-      it "Warns on a monday" do
-        monday_date = Date.parse("2016-07-11")
-        allow(Date).to receive(:today).and_return monday_date
+        it "raises error if file attribute is empty" do
+          @my_plugin.report = ""
+          expect do
+            @my_plugin.warn_if_file_less_than(percentage: 50.0)
+          end.to raise_error(DangerCobertura::ERROR_FILE_NOT_SET)
+        end
 
-        @my_plugin.warn_on_mondays
+        it "raises error if file is not found" do
+          @my_plugin.report = "cant/find/my/file.xml"
+          expect do
+            @my_plugin.warn_if_file_less_than(percentage: 50.0)
+          end.to raise_error(/#{@my_plugin.report}/)
+        end
 
-        expect(@dangerfile.status_report[:warnings]).to eq(["Trying to merge code on a Monday"])
+        it "adds warn if total coverage lower than given" do
+          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_two.py top_level_one.py))
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).not_to include("top_level_one.py has less than 90.0% coverage")
+        end
+
+        it "does not add warn if coverage not" do
+          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_two.py"])
+          @my_plugin.warn_if_file_less_than(percentage: 10.0)
+
+          expect(@dangerfile.status_report[:warnings]).to be_empty
+        end
       end
 
-      it "Does nothing on a tuesday" do
-        monday_date = Date.parse("2016-07-12")
-        allow(Date).to receive(:today).and_return monday_date
+      describe "show_coverage" do
+        it "raises error if file attribute is nil" do
+          @my_plugin.report = nil
+          expect do
+            @my_plugin.show_coverage
+          end.to raise_error(DangerCobertura::ERROR_FILE_NOT_SET)
+        end
 
-        @my_plugin.warn_on_mondays
+        it "raises error if file attribute is empty" do
+          @my_plugin.report = ""
+          expect do
+            @my_plugin.show_coverage
+          end.to raise_error(DangerCobertura::ERROR_FILE_NOT_SET)
+        end
 
-        expect(@dangerfile.status_report[:warnings]).to eq([])
+        it "raises error if file is not found" do
+          @my_plugin.report = "cant/find/my/file.xml"
+          expect do
+            @my_plugin.show_coverage
+          end.to raise_error(/#{@my_plugin.report}/)
+        end
+
+        it "prints coverage" do
+          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_two.py"])
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("sub_two.py")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("84.16")
+        end
       end
-
     end
   end
 end
