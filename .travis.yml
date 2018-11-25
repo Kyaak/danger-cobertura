@@ -7,8 +7,20 @@ cache:
 rvm:
   - 2.5.2
 
+env:
+  global:
+    - CC_TEST_REPORTER_ID=7cfcaf05ab26fd0e7088ab0b16e902559a6d0c0c6f6785fa908e20efeba53c64
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
 script:
   - bundle exec rake spec
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
 deploy:
   provider: rubygems
