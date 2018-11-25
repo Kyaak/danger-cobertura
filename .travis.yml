@@ -1,12 +1,19 @@
 language: ruby
+
 cache:
   directories:
-    - bundle
+  - bundle
 
 rvm:
-  - 2.0
-  - 2.1.3
-  - 2.3.1
+  - 2.5.2
 
 script:
-    - bundle exec rake spec
+  - bundle exec rake spec
+
+deploy:
+  provider: rubygems
+  api_key:
+    secure: N+QJ0e6CW/m5zVxKYBZNSShZYghGH7TVgsoDbNndawGe0/A5Q8iSURliqO1Sykbc7xPwnewfNpcVSB+6LjQPOfUn62ZtxuDQQx5orVwcn0ul3wHG7MD9CoJqUD/xbsJNFjBMSI+zYlfg9uI9BrB55ctdra77HcvOsayS3ByL6pB+GoB1HgXwNZQjLL+0Hpy0sO3Vvr7LiAE4nv4CikSQy169hQ7Q70K0bxfhdGYxWX2FW2NxfvxatkBAZrHlN5Vg4NV4ZAKQBMgI3kFRupZOoQkTy08CZCueuac9jl8I/FaIsugKVjgba+JJ79WnqC/9pPSWedcy9kgvl8/mKu8KUEhBFjF0/ib40+KG9ioaHUDr+ddWD1FEm7qFpipamH7mcznmcfSaEqvILz8V36q8bRCjgHksY1TR9rJBa4RFzGvzyUclbtkvqm1KNN9VqEREKFKjw1JtBfPeSqcm+ciYmREl0r/RgI14Z7XyghJi9CxRdggcQonCfQSDcNfuvasJAd+prRmAUue/MRqbtgyS5rfUiEX5U4H5Futi9ri4vhVUc6seNYGPuxcf42/KGUFspkDJwW7nKSNRkf+diV7OfGLLR75YU4r5T6jFx/Jl+cTN++xCGhBGYa97FwI8+NMQCnACERC1hVXADuVGCQGvh68xpuPgFdOwtdLEONol94g=
+  gem: danger-cobertura
+  on:
+    branch: master

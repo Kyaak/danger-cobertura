@@ -2,3 +2,5 @@
 pkg
 .idea/
 .yardoc
+Gemfile.lock
+.vscode

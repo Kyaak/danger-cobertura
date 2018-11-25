@@ -78,11 +78,11 @@ module Danger
         end
 
         it "prints coverage" do
-          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_two.py"])
+          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
           @my_plugin.show_coverage
 
-          expect(@dangerfile.status_report[:markdowns][0].message).to include("sub_two.py")
-          expect(@dangerfile.status_report[:markdowns][0].message).to include("84.16")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("sub_three.py")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("0.00")
         end
       end
     end
