@@ -13,13 +13,13 @@ module Danger
   # @tags cobertura, coverage
   #
   class DangerCobertura < Plugin
+    require "oga"
     require_relative "./coverage_item"
+
     ERROR_FILE_NOT_SET = "Cobertura file not set. Use 'cobertura.file = \"path/to/my/report.xml\"'."
     ERROR_FILE_NOT_FOUND = "No file found at %s"
 
-    # Path to the xml formatted cobertura report.
-    #
-    # @return [String]
+    # @return [String] Path to the xml formatted cobertura report.
     attr_accessor :report
 
     # Warn if a modified file has a lower total coverage than defined.
@@ -36,7 +36,7 @@ module Danger
 
     # Show markdown table of modified and added files.
     #
-    # @return [Array<String>]
+    # @return [Array<String>] A markdown report of modified files and their coverage report.
     def show_coverage
       return if filtered_items.empty?
 
@@ -52,42 +52,42 @@ module Danger
     private
 
     # Getter for coverage items of targeted files.
+    # Only coverage items contained in the targeted files list will be returned.
     #
-    # @return [Array<CoverageItem>]
+    # @return [Array<CoverageItem>] Filtered array of items
     def filtered_items
       @filtered_items ||= coverage_items.select do |item|
         target_files.include? item.file_name
       end
     end
 
-    # A getter for current updated files.
+    # A getter for current modified and added files.
     #
-    # @return [Array<String>]
+    # @return [Danger::FileList] Wrapper FileList object.
     def target_files
       @target_files ||= git.modified_files + git.added_files
     end
 
     # Parse the defined coverage report file.
     #
-    # @return [Oga::XML::Document]
+    # @return [Oga::XML::Document] The root xml object.
     def parse
-      require "oga"
       raise ERROR_FILE_NOT_SET if report.nil? || report.empty?
       raise format(ERROR_FILE_NOT_FOUND, report) unless File.exist?(report)
 
       Oga.parse_xml(File.read(report))
     end
 
-    # Get the xml cobertura report.
+    # Convenient method to not always parse the report but keep it in the memory.
     #
-    # @return [Oga::XML::Document]
+    # @return [Oga::XML::Document] The root xml object.
     def xml_report
       @xml_report ||= parse
     end
 
-    # Getter for all coverage data.
+    # Extract and create all class items from the xml report.
     #
-    # @return [Array<CoverageItem>]
+    # @return [Array<CoverageItem>] Items with cobertura class information.
     def coverage_items
       @coverage_items ||= xml_report.xpath("//class").map do |node|
         CoverageItem.new(node)
