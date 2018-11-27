@@ -25,7 +25,7 @@ module Danger
     # Warn if a modified file has a lower total coverage than defined.
     #
     # @param percentage [Float] The minimum code coverage required for a file.
-    # @return [Array<String>]
+    # @return [Array<String>] Warnings of files with a lower coverage.
     def warn_if_file_less_than(percentage:)
       filtered_items.each do |item|
         next unless item.total_percentage < percentage

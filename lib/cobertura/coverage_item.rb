@@ -2,7 +2,9 @@
 
 # Container item for cobertura <class> entries
 class CoverageItem
-  # @param node [Oga::XML::NodeSet] An xml node set containing the class information of a cobertura report.
+  # Initialize an object using an xml node set containing the class information of a cobertura report.
+  #
+  # @param node [Oga::XML::NodeSet] NodeSet of a class
   def initialize(node)
     @node = node
   end
