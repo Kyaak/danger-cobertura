@@ -19,7 +19,7 @@ module Danger
 
     # Path to the xml formatted cobertura report.
     #
-    # @return   [String]
+    # @return [String]
     attr_accessor :report
 
     # Warn if a modified file has a lower total coverage than defined.
