@@ -23,6 +23,7 @@ module Danger
     #
     # @return [String] Report file.
     attr_accessor :report
+    attr_accessor :headers
 
     # Warn if a modified file has a lower total coverage than defined.
     #
@@ -43,15 +44,37 @@ module Danger
       return if filtered_items.empty?
 
       line = +"## Code coverage\n"
-      line << "File | Coverage\n"
-      line << "-----|-----\n"
+      line << "File|Total"
+      line << "|Line" if header_line_rate?
+      line << "|Branch" if header_branch_rate?
+      line << "\n"
+      line << "-----|-----"
+      line << "|-----" if header_line_rate?
+      line << "|-----" if header_branch_rate?
+      line << "\n"
       filtered_items.each do |item|
-        line << "#{item.name} | #{format('%.2f', item.total_percentage)}\n"
+        line << item.name
+        line << "|#{format_coverage(item.total_percentage)}"
+        line << "|#{format_coverage(item.line_rate)}" if header_line_rate?
+        line << "|#{format_coverage(item.branch_rate)}" if header_branch_rate?
+        line << "\n"
       end
       markdown line
     end
 
     private
+
+    def header_line_rate?
+      !headers.nil? && headers.include?(:line)
+    end
+
+    def header_branch_rate?
+      !headers.nil? && headers.include?(:branch)
+    end
+
+    def format_coverage(coverage)
+      format("%.2f", coverage)
+    end
 
     # Getter for coverage items of targeted files.
     # Only coverage items contained in the targeted files list will be returned.

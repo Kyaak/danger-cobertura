@@ -79,6 +79,7 @@ module Danger
 
         it "prints coverage" do
           @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @my_plugin.headers = [:branch]
           @my_plugin.show_coverage
 
           expect(@dangerfile.status_report[:markdowns][0].message).to include("sub_three.py")
