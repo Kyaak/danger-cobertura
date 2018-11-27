@@ -19,7 +19,9 @@ module Danger
     ERROR_FILE_NOT_SET = "Cobertura file not set. Use 'cobertura.file = \"path/to/my/report.xml\"'."
     ERROR_FILE_NOT_FOUND = "No file found at %s"
 
-    # @return [String] Path to the xml formatted cobertura report.
+    # Path to the xml formatted cobertura report.
+    #
+    # @return [String] Report file.
     attr_accessor :report
 
     # Warn if a modified file has a lower total coverage than defined.
