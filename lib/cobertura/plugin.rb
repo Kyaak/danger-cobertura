@@ -124,7 +124,7 @@ module Danger
     # @return [Array<CoverageItem>] Filtered array of items
     def filtered_items
       @filtered_items ||= coverage_items.select do |item|
-        target_files.include? item_filename(item)
+        target_files.include?(item_filename(item)) && !item.name.include?("$")
       end
     end
 

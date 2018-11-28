@@ -277,6 +277,12 @@
 						<line branch="true" condition-coverage="0% (0/2)" hits="0" number="88"/>
 					</lines>
 				</class>
+				<class branch-rate="0" complexity="0" filename="sub_folder/sub_three.py" line-rate="0" name="sub_three$.py">
+					<methods/>
+					<lines>
+						<line branch="true" condition-coverage="0% (0/2)" hits="0" number="88"/>
+					</lines>
+				</class>
 			</classes>
 		</package>
 	</packages>

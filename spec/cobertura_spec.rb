@@ -104,6 +104,14 @@ module Danger
 
           expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
         end
+
+        it "should not add name with $" do
+          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_three.py))
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).to include("sub_three.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).not_to include("sub_three$.py has less than 90.0% coverage")
+        end
       end
 
       describe "show_coverage" do
