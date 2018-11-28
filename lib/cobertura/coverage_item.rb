@@ -25,8 +25,8 @@ class CoverageItem
   end
 
   # @return [String] Name of the class file with directory path
-  def file_name
-    @file_name ||= @node.attribute("filename").value.to_s
+  def filename
+    @filename ||= @node.attribute("filename").value.to_s
   end
 
   # @return [String] Name of the class file with package structure

@@ -76,6 +76,34 @@ module Danger
           expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
           expect(@dangerfile.status_report[:warnings]).to include("sub_one.py has less than 90.0% coverage")
         end
+
+        it "does not add if filename missing prefix" do
+          # sub_folder/sub_two.py in xml
+          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
+          expect(@my_plugin.filename_prefix).to be_nil
+
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).not_to include("sub_two.py has less than 90.0% coverage")
+        end
+
+        it "does add if filename prefix set" do
+          # sub_folder/sub_two.py in xml
+          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
+          @my_plugin.filename_prefix = "my_prefix_dir"
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+        end
+
+        it "ignores filename prefix slash" do
+          # sub_folder/sub_two.py in xml
+          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
+          @my_plugin.filename_prefix = "my_prefix_dir/"
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+        end
       end
 
       describe "show_coverage" do
@@ -174,6 +202,34 @@ module Danger
           expect(@dangerfile.status_report[:markdowns][0].message).to include("Line")
           expect(@dangerfile.status_report[:markdowns][0].message).to include(table_column_line(4))
           expect(@dangerfile.status_report[:markdowns][0].message).to include("0.00")
+        end
+
+        it "does not show coverage if filename prefix missing" do
+          # sub_folder/sub_two.py in xml
+          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
+          expect(@my_plugin.filename_prefix).to be_nil
+
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns]).to be_empty
+        end
+
+        it "does show coverage if filename prefix matches" do
+          # sub_folder/sub_two.py in xml
+          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
+          @my_plugin.filename_prefix = "my_prefix_dir"
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns]).not_to be_empty
+        end
+
+        it "ignores filename prefix slash" do
+          # sub_folder/sub_two.py in xml
+          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
+          @my_plugin.filename_prefix = "my_prefix_dir/"
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns]).not_to be_empty
         end
       end
     end

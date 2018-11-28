@@ -29,6 +29,10 @@ module Danger
     #
     # @return [Array<Symbol>] Columns to add in the markdown report.
     attr_accessor :additional_headers
+    # Path prefix to be added to the cobertura class filename attribute.
+    #
+    # @return [String] Prefix to add to filename path.
+    attr_accessor :filename_prefix
 
     # Warn if a modified file has a lower total coverage than defined.
     #
@@ -120,8 +124,21 @@ module Danger
     # @return [Array<CoverageItem>] Filtered array of items
     def filtered_items
       @filtered_items ||= coverage_items.select do |item|
-        target_files.include? item.file_name
+        target_files.include? item_filename(item)
       end
+    end
+
+    # Combine item filename with prefix.
+    #
+    # @param item [CoverageItem] Coverage item to create the full filename.
+    # @return [String] Combined filename.
+    def item_filename(item)
+      result = +""
+      if filename_prefix
+        result << filename_prefix
+        result << "/" unless filename_prefix.chars.last == "/"
+      end
+      result << item.filename
     end
 
     # A getter for current modified and added files.
