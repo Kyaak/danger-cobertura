@@ -53,6 +53,29 @@ module Danger
 
           expect(@dangerfile.status_report[:warnings]).to be_empty
         end
+
+        it "adds warn for modified files" do
+          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_two.py))
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+        end
+
+        it "adds warn for added files" do
+          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_two.py))
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+        end
+
+        it "adds warn for added and modified files" do
+          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_two.py))
+          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_one.py))
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).to include("sub_one.py has less than 90.0% coverage")
+        end
       end
 
       describe "show_coverage" do
@@ -77,12 +100,79 @@ module Danger
           end.to raise_error(/#{@my_plugin.report}/)
         end
 
-        it "prints coverage" do
-          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
-          @my_plugin.headers = [:branch]
+        it "adds coverage for modified files" do
+          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_two.py))
           @my_plugin.show_coverage
 
-          expect(@dangerfile.status_report[:markdowns][0].message).to include("sub_three.py")
+          expect(@dangerfile.status_report[:markdowns]).not_to be_empty
+        end
+
+        it "adds coverage for added files" do
+          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_two.py))
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns]).not_to be_empty
+        end
+
+        it "adds coverage for added and modified files" do
+          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_two.py))
+          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_one.py))
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns]).not_to be_empty
+        end
+
+        it "default does not add branch and line" do
+          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("File")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("Total")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include(table_column_line(2))
+          expect(@dangerfile.status_report[:markdowns][0].message).not_to include("Branch")
+          expect(@dangerfile.status_report[:markdowns][0].message).not_to include("Line")
+          expect(@dangerfile.status_report[:markdowns][0].message).not_to include(table_column_line(4))
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("0.00")
+        end
+
+        it "additional_header line adds line rate" do
+          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @my_plugin.additional_headers = [:line]
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("File")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("Total")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("Line")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include(table_column_line(3))
+          expect(@dangerfile.status_report[:markdowns][0].message).not_to include("Branch")
+          expect(@dangerfile.status_report[:markdowns][0].message).not_to include(table_column_line(4))
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("0.00")
+        end
+
+        it "additional_header branch adds branch rate" do
+          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @my_plugin.additional_headers = [:branch]
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("File")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("Total")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("Branch")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include(table_column_line(3))
+          expect(@dangerfile.status_report[:markdowns][0].message).not_to include("Line")
+          expect(@dangerfile.status_report[:markdowns][0].message).not_to include(table_column_line(4))
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("0.00")
+        end
+
+        it "additional_header line and branch adds rate" do
+          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @my_plugin.additional_headers = %i(branch line)
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("File")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("Total")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("Branch")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include("Line")
+          expect(@dangerfile.status_report[:markdowns][0].message).to include(table_column_line(4))
           expect(@dangerfile.status_report[:markdowns][0].message).to include("0.00")
         end
       end

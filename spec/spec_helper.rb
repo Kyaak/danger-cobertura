@@ -14,6 +14,8 @@ require "mocha"
 require "simplecov"
 require "simplecov-console"
 
+require_relative "./helper/cobertura_helper"
+
 SimpleCov.formatter = SimpleCov::Formatter::Console
 SimpleCov.start
 
@@ -29,6 +31,7 @@ RSpec.configure do |config|
   config.color = true
   config.tty = true
   config.mock_with :mocha
+  config.include Helpers
 end
 
 require "danger_plugin"

@@ -150,3 +150,6 @@ PercentLiteralDelimiters:
 
 Security/YAMLLoad:
   Enabled: false
+
+Metrics/ModuleLength:
+  Max: 500
