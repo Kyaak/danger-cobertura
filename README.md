@@ -3,7 +3,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/2e657e2a49ddf9696ece/maintainability)](https://codeclimate.com/github/Kyaak/danger-cobertura/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/2e657e2a49ddf9696ece/test_coverage)](https://codeclimate.com/github/Kyaak/danger-cobertura/test_coverage)
 [![Inline docs](http://inch-ci.org/github/Kyaak/danger-cobertura.svg?branch=master)](http://inch-ci.org/github/Kyaak/danger-cobertura)
-
+[![Gem](https://img.shields.io/gem/dt/danger-cobertura.svg)](https://rubygems.org/gems/danger-cobertura)
 
 # danger-cobertura
 
@@ -34,12 +34,20 @@ _It inspects only modified and added files, deleted ones are not considered usef
 
 ### Coverage report
 
-File | Coverage
+#### Minimum 
+ 
+File | Total
 -----|-----
 example_one.py | 50.00
 example_two.py | 35.60
 example_three.py | 10.48
 
+#### Maximum 
+ 
+File | Total | Line | Branch
+-----|-----|-----|-----
+example_one.py | 50.00 | 75.00 | 25.00
+example_two.py | 35.50 | 20.50 | 50.50
 
 ## Installation
 
@@ -57,9 +65,25 @@ cobertura.warn_if_file_less_than(percentage: 50.0)
 </pre>
 </blockquote>    
 
-<blockquote>Show coverage of all files 
+<blockquote>Show default coverage of all files 
 <pre>
 cobertura.report = build/reports/coverage.xml
+cobertura.show_coverage
+</pre>
+</blockquote>   
+
+<blockquote>Use filename prefix to find your files - find your files in your filesystem. e.g Java projects are under "src/main/java".
+<pre>
+cobertura.report = build/reports/coverage.xml
+cobertura.filename_prefix = "src/main/java"
+cobertura.show_coverage
+</pre>
+</blockquote>   
+
+<blockquote>Show coverage of all files including line and branch rate
+<pre>
+cobertura.report = build/reports/coverage.xml
+cobertura.additional_headers = [:line, :branch]
 cobertura.show_coverage
 </pre>
 </blockquote>   
@@ -75,6 +99,8 @@ cobertura.show_coverage
 ## Attributes
 
 __`report`__ - Path to the cobertura xml report, e.g. `build/reports/coverage.xml`
+__`additional_headers`__ - Array of symbols to include in the coverage report. Available options are `:line`, `:branch`
+__`filename_prefix`__ - Path prefix to be added to the cobertura class filename attribute. e.g. `src/main/java`
 
 ## Methods
 

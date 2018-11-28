@@ -3,7 +3,7 @@
 # If you don't like these settings, just delete this file :)
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.2
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -150,3 +150,6 @@ PercentLiteralDelimiters:
 
 Security/YAMLLoad:
   Enabled: false
+
+Metrics/ModuleLength:
+  Max: 500
