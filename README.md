@@ -99,7 +99,9 @@ cobertura.show_coverage
 ## Attributes
 
 __`report`__ - Path to the cobertura xml report, e.g. `build/reports/coverage.xml`
+
 __`additional_headers`__ - Array of symbols to include in the coverage report. Available options are `:line`, `:branch`
+
 __`filename_prefix`__ - Path prefix to be added to the cobertura class filename attribute. e.g. `src/main/java`
 
 ## Methods

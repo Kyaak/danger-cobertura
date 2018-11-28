@@ -45,9 +45,9 @@ module Danger
     end
 
     # Show markdown table of modified and added files.
-    #
+    # TODO remove * wildcard to accept all parameter: `danger local` bug - https://github.com/danger/danger/issues/1041
     # @return [Array<String>] A markdown report of modified files and their coverage report.
-    def show_coverage
+    def show_coverage(*)
       return if filtered_items.empty?
 
       table = "## Code coverage\n".dup

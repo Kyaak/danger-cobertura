@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2018-11-28
+### Fixed
+- Add * wildcard to have parameters in `show_coverage` due to `danger local` bug [Issue](https://github.com/danger/danger/issues/1041)
+
 ## [1.1.0] - 2018-11-28
 ### Added
 - Option to add branch and line rate information
