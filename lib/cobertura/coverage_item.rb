@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Container item for cobertura <class> entries
 class CoverageItem
   # Initialize an object using an xml node set containing the class information of a cobertura report.

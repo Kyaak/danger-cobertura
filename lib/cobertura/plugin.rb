@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Danger
   # Show code coverage of modified and added files.
   # Add warnings if minimum file coverage is not achieved.
@@ -16,9 +14,9 @@ module Danger
     require "oga"
     require_relative "./coverage_item"
 
-    ERROR_FILE_NOT_SET = "Cobertura file not set. Use 'cobertura.file = \"path/to/my/report.xml\"'."
-    ERROR_FILE_NOT_FOUND = "No file found at %s"
-    TABLE_COLUMN_LINE = "-----"
+    ERROR_FILE_NOT_SET = "Cobertura file not set. Use 'cobertura.file = \"path/to/my/report.xml\"'.".freeze
+    ERROR_FILE_NOT_FOUND = "No file found at %s".freeze
+    TABLE_COLUMN_LINE = "-----".freeze
 
     # Path to the xml formatted cobertura report.
     #
