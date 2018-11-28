@@ -50,7 +50,7 @@ module Danger
     def show_coverage
       return if filtered_items.empty?
 
-      table = +"## Code coverage\n"
+      table = "## Code coverage\n".dup
       table << table_header
       table << table_separation
 
@@ -66,7 +66,7 @@ module Danger
     #
     # @return [String] Markdown for table headers.
     def table_header
-      line = +"File|Total"
+      line = "File|Total".dup
       line << "|Line" if header_line_rate?
       line << "|Branch" if header_branch_rate?
       line << "\n"
@@ -76,7 +76,7 @@ module Danger
     #
     # @return [String] Markdown for table header separation.
     def table_separation
-      line = +"#{TABLE_COLUMN_LINE}|#{TABLE_COLUMN_LINE}"
+      line = "#{TABLE_COLUMN_LINE}|#{TABLE_COLUMN_LINE}".dup
       line << "|#{TABLE_COLUMN_LINE}" if header_line_rate?
       line << "|#{TABLE_COLUMN_LINE}" if header_branch_rate?
       line << "\n"
@@ -87,7 +87,7 @@ module Danger
     # @param item [CoverageItem] Coverage item to put information in the table row.
     # @return [String] Markdown for table rows.
     def table_entry(item)
-      line = +item.name
+      line = item.name.dup
       line << "|#{format_coverage(item.total_percentage)}"
       line << "|#{format_coverage(item.line_rate)}" if header_line_rate?
       line << "|#{format_coverage(item.branch_rate)}" if header_branch_rate?
@@ -131,7 +131,7 @@ module Danger
     # @param item [CoverageItem] Coverage item to create the full filename.
     # @return [String] Combined filename.
     def item_filename(item)
-      result = +""
+      result = "".dup
       if filename_prefix
         result << filename_prefix
         result << "/" unless filename_prefix.chars.last == "/"
