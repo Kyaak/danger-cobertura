@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2018-11-28
+### Added
+- Option to add branch and line rate information
+- Add a filename prefix
+
+### Changed
+- Exclude all files with "$" sign in name
+- Support ruby 2.2 - 2.5
+
 ## [1.0.0] - 2018-11-25
 ### Added
 - Initial release.
