@@ -25,7 +25,7 @@ before_script:
 
 script:
   - bundle exec rake spec
-  - sonar-scanner
+  - sonar-scanner -Dsonar.projectKey=Kyaak_danger-cobertura -Dsonar.sources=.
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
