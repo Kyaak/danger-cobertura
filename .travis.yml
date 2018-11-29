@@ -10,6 +10,10 @@ rvm:
   - 2.4
   - 2.5
 
+addons:
+  sonarcloud:
+    organization: "kyaak-github"
+
 env:
   global:
     - CC_TEST_REPORTER_ID=7cfcaf05ab26fd0e7088ab0b16e902559a6d0c0c6f6785fa908e20efeba53c64
@@ -21,6 +25,7 @@ before_script:
 
 script:
   - bundle exec rake spec
+  - sonar-scanner
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
