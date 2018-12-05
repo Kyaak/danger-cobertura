@@ -8,6 +8,13 @@ module Danger
       expect(Danger::DangerCobertura.new(nil)).to be_a Danger::Plugin
     end
 
+    SUB_ONE = %w(sub_folder/sub_one.py)
+    SUB_TWO = %w(sub_folder/sub_two.py)
+    SUB_THREE = %w(sub_folder/sub_three.py)
+    SUB_TWO_WARNING = 'sub_two.py has less than 90.0% coverage'
+    PREFIX = 'my_prefix_dir'
+    PREFIX_TWO = %w(my_prefix_dir/sub_folder/sub_two.py)
+
     describe "with Dangerfile" do
       before do
         @dangerfile = testing_dangerfile
@@ -43,37 +50,37 @@ module Danger
           @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_two.py top_level_one.py))
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
-          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).to include(SUB_TWO_WARNING)
           expect(@dangerfile.status_report[:warnings]).not_to include("top_level_one.py has less than 90.0% coverage")
         end
 
         it "does not add warn if coverage not" do
-          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_two.py"])
+          @dangerfile.git.stubs(:modified_files).returns(SUB_TWO)
           @my_plugin.warn_if_file_less_than(percentage: 10.0)
 
           expect(@dangerfile.status_report[:warnings]).to be_empty
         end
 
         it "adds warn for modified files" do
-          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_two.py))
+          @dangerfile.git.stubs(:modified_files).returns(SUB_TWO)
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
-          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).to include(SUB_TWO_WARNING)
         end
 
         it "adds warn for added files" do
-          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_two.py))
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
-          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).to include(SUB_TWO_WARNING)
         end
 
         it "adds warn for added and modified files" do
-          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_two.py))
-          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_one.py))
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
+          @dangerfile.git.stubs(:modified_files).returns(SUB_ONE)
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
-          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).to include(SUB_TWO_WARNING)
           expect(@dangerfile.status_report[:warnings]).to include("sub_one.py has less than 90.0% coverage")
         end
 
@@ -84,29 +91,27 @@ module Danger
 
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
-          expect(@dangerfile.status_report[:warnings]).not_to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).not_to include(SUB_TWO_WARNING)
         end
 
         it "does add if filename prefix set" do
-          # sub_folder/sub_two.py in xml
-          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
-          @my_plugin.filename_prefix = "my_prefix_dir"
+          @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @my_plugin.filename_prefix = PREFIX
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
-          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).to include(SUB_TWO_WARNING)
         end
 
         it "ignores filename prefix slash" do
-          # sub_folder/sub_two.py in xml
-          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
-          @my_plugin.filename_prefix = "my_prefix_dir/"
+          @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @my_plugin.filename_prefix = "#{PREFIX}/"
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
-          expect(@dangerfile.status_report[:warnings]).to include("sub_two.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:warnings]).to include(SUB_TWO_WARNING)
         end
 
         it "should not add name with $" do
-          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_three.py))
+          @dangerfile.git.stubs(:added_files).returns(SUB_THREE)
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
           expect(@dangerfile.status_report[:warnings]).to include("sub_three.py has less than 90.0% coverage")
@@ -137,29 +142,29 @@ module Danger
         end
 
         it "adds coverage for modified files" do
-          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_two.py))
+          @dangerfile.git.stubs(:modified_files).returns(SUB_TWO)
           @my_plugin.show_coverage
 
           expect(@dangerfile.status_report[:markdowns]).not_to be_empty
         end
 
         it "adds coverage for added files" do
-          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_two.py))
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
           @my_plugin.show_coverage
 
           expect(@dangerfile.status_report[:markdowns]).not_to be_empty
         end
 
         it "adds coverage for added and modified files" do
-          @dangerfile.git.stubs(:added_files).returns(%w(sub_folder/sub_two.py))
-          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_one.py))
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
+          @dangerfile.git.stubs(:modified_files).returns(SUB_ONE)
           @my_plugin.show_coverage
 
           expect(@dangerfile.status_report[:markdowns]).not_to be_empty
         end
 
         it "default does not add branch and line" do
-          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @dangerfile.git.stubs(:modified_files).returns(SUB_THREE)
           @my_plugin.show_coverage
 
           expect(@dangerfile.status_report[:markdowns][0].message).to include("File")
@@ -172,7 +177,7 @@ module Danger
         end
 
         it "additional_header line adds line rate" do
-          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @dangerfile.git.stubs(:modified_files).returns(SUB_THREE)
           @my_plugin.additional_headers = [:line]
           @my_plugin.show_coverage
 
@@ -186,7 +191,7 @@ module Danger
         end
 
         it "additional_header branch adds branch rate" do
-          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @dangerfile.git.stubs(:modified_files).returns(SUB_THREE)
           @my_plugin.additional_headers = [:branch]
           @my_plugin.show_coverage
 
@@ -200,7 +205,7 @@ module Danger
         end
 
         it "additional_header line and branch adds rate" do
-          @dangerfile.git.stubs(:modified_files).returns(["sub_folder/sub_three.py"])
+          @dangerfile.git.stubs(:modified_files).returns(SUB_THREE)
           @my_plugin.additional_headers = %i(branch line)
           @my_plugin.show_coverage
 
@@ -213,8 +218,7 @@ module Danger
         end
 
         it "does not show coverage if filename prefix missing" do
-          # sub_folder/sub_two.py in xml
-          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
+          @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
           expect(@my_plugin.filename_prefix).to be_nil
 
           @my_plugin.show_coverage
@@ -223,18 +227,16 @@ module Danger
         end
 
         it "does show coverage if filename prefix matches" do
-          # sub_folder/sub_two.py in xml
-          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
-          @my_plugin.filename_prefix = "my_prefix_dir"
+          @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @my_plugin.filename_prefix = PREFIX
           @my_plugin.show_coverage
 
           expect(@dangerfile.status_report[:markdowns]).not_to be_empty
         end
 
         it "ignores filename prefix slash" do
-          # sub_folder/sub_two.py in xml
-          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
-          @my_plugin.filename_prefix = "my_prefix_dir/"
+          @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @my_plugin.filename_prefix = "#{PREFIX}/"
           @my_plugin.show_coverage
 
           expect(@dangerfile.status_report[:markdowns]).not_to be_empty
