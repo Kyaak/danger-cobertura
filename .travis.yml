@@ -39,3 +39,4 @@ deploy:
   gem: danger-cobertura
   on:
     branch: master
+    rvm: 2.5
