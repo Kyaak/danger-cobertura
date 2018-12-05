@@ -10,6 +10,12 @@ rvm:
   - 2.4
   - 2.5
 
+addons:
+  sonarcloud:
+    organization: "kyaak-github"
+    token:
+      secure: "d6/AIadHOG36lKQYJBJLRH1Ghv34RQchjRGJ4aNW5GaFMpQVrS/Yy7jb3hf4On/Mvqmsi3x+EwJt2R5V82t8WaHBvl8F/wdxn4uRpJC9WDiNVLnFl2vcDLDZvATVT8oG4ewN+uEKuBuQN1U1nUAUR5QIE8sNxl0sGOpGpanpmT+LclPqyBc67KhfstLRyW8miKo0lw0aYdAKuN7Ib9yuR+jkVB6/Ua7KdgfZAgbpijU3OsmwagIGM77BD3LiMrbe6G3Lsv3y8x+qLfaO9SJXaQt5lYWOxAfg1fJPjtEbtkkCGlnim7IOZsg2uZ22dlCYvVq4eHtuOdmSEDb8DnpVGpQ51CqMtS2Wm4G+xYTr49Lvr+n9YjgF7TbgqEa/PUD7IHHanw7cDsJFLS4jcBR+5wTDpZT6WHQGBMaIrVo+oFOA5GPQ9IN1byoafY+xk3D+G08yUPxE1RT00H2YEq+UkdIXKZKCekM+Yir8+0sOE1GRlGfWefu8SSq4kvvfDmvLFow3tkjiJbR99BNf8xP9fc2HOhGc0jdOETDl2gtlyq7HPfPpqALkhdUFspW+iiFhNu0XgBip5vAltN38SmPWTc4e9jBlO6wNnC32O0TKt5AJCYuI1B9gAEuiuDARx8/TQjtClHUxH0smAzqmpfOTa/KEz0GV5kJc2bDadBzeYBc="
+
 env:
   global:
     - CC_TEST_REPORTER_ID=7cfcaf05ab26fd0e7088ab0b16e902559a6d0c0c6f6785fa908e20efeba53c64
@@ -21,6 +27,7 @@ before_script:
 
 script:
   - bundle exec rake spec
+  - sonar-scanner
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
@@ -32,3 +39,4 @@ deploy:
   gem: danger-cobertura
   on:
     branch: master
+    rvm: 2.5
