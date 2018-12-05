@@ -8,9 +8,9 @@ module Danger
       expect(Danger::DangerCobertura.new(nil)).to be_a Danger::Plugin
     end
 
-    SUB_ONE = %w(sub_folder/sub_two.py)
+    SUB_ONE = %w(sub_folder/sub_one.py)
     SUB_TWO = %w(sub_folder/sub_two.py)
-    SUB_THREE = %w(sub_folder/sub_two.py)
+    SUB_THREE = %w(sub_folder/sub_three.py)
     SUB_TWO_WARNING = 'sub_two.py has less than 90.0% coverage'
     PREFIX = 'my_prefix_dir'
     PREFIX_TWO = %w(my_prefix_dir/sub_folder/sub_two.py)
@@ -51,7 +51,7 @@ module Danger
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
           expect(@dangerfile.status_report[:warnings]).to include(SUB_TWO_WARNING)
-          expect(@dangerfile.status_report[:warnings]).not_to include(SUB_TWO_WARNING)
+          expect(@dangerfile.status_report[:warnings]).not_to include("top_level_one.py has less than 90.0% coverage")
         end
 
         it "does not add warn if coverage not" do
