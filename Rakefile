@@ -17,6 +17,9 @@ end
 desc "Run RuboCop on the lib/specs directory"
 RuboCop::RakeTask.new(:rubocop) do |task|
   task.patterns = %w(lib/**/*.rb spec/**/*.rb)
+  task.fail_on_error = false
+  task.formatters = %w(json)
+  task.options = %w(--out rubocop-result.json)
 end
 
 desc "Ensure that the plugin passes `danger plugins lint`"
