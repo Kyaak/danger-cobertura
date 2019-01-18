@@ -10,8 +10,15 @@ rvm:
   - 2.4
   - 2.5
 
+addons:
+  sonarcloud:
+    organization: "kyaak-github"
+    token:
+      secure: "d6/AIadHOG36lKQYJBJLRH1Ghv34RQchjRGJ4aNW5GaFMpQVrS/Yy7jb3hf4On/Mvqmsi3x+EwJt2R5V82t8WaHBvl8F/wdxn4uRpJC9WDiNVLnFl2vcDLDZvATVT8oG4ewN+uEKuBuQN1U1nUAUR5QIE8sNxl0sGOpGpanpmT+LclPqyBc67KhfstLRyW8miKo0lw0aYdAKuN7Ib9yuR+jkVB6/Ua7KdgfZAgbpijU3OsmwagIGM77BD3LiMrbe6G3Lsv3y8x+qLfaO9SJXaQt5lYWOxAfg1fJPjtEbtkkCGlnim7IOZsg2uZ22dlCYvVq4eHtuOdmSEDb8DnpVGpQ51CqMtS2Wm4G+xYTr49Lvr+n9YjgF7TbgqEa/PUD7IHHanw7cDsJFLS4jcBR+5wTDpZT6WHQGBMaIrVo+oFOA5GPQ9IN1byoafY+xk3D+G08yUPxE1RT00H2YEq+UkdIXKZKCekM+Yir8+0sOE1GRlGfWefu8SSq4kvvfDmvLFow3tkjiJbR99BNf8xP9fc2HOhGc0jdOETDl2gtlyq7HPfPpqALkhdUFspW+iiFhNu0XgBip5vAltN38SmPWTc4e9jBlO6wNnC32O0TKt5AJCYuI1B9gAEuiuDARx8/TQjtClHUxH0smAzqmpfOTa/KEz0GV5kJc2bDadBzeYBc="
+
 env:
   global:
+    - CC_TEST_REPORTER_ID=7cfcaf05ab26fd0e7088ab0b16e902559a6d0c0c6f6785fa908e20efeba53c64
     - CC_TEST_REPORTER_ID=9226f0d36ca27b394a8c02615dcb54857e2ffbb5099288307016c5c78718dd98
 
 before_script:
@@ -25,3 +32,12 @@ script:
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  
+deploy:
+  provider: rubygems
+  api_key:
+    secure: N+QJ0e6CW/m5zVxKYBZNSShZYghGH7TVgsoDbNndawGe0/A5Q8iSURliqO1Sykbc7xPwnewfNpcVSB+6LjQPOfUn62ZtxuDQQx5orVwcn0ul3wHG7MD9CoJqUD/xbsJNFjBMSI+zYlfg9uI9BrB55ctdra77HcvOsayS3ByL6pB+GoB1HgXwNZQjLL+0Hpy0sO3Vvr7LiAE4nv4CikSQy169hQ7Q70K0bxfhdGYxWX2FW2NxfvxatkBAZrHlN5Vg4NV4ZAKQBMgI3kFRupZOoQkTy08CZCueuac9jl8I/FaIsugKVjgba+JJ79WnqC/9pPSWedcy9kgvl8/mKu8KUEhBFjF0/ib40+KG9ioaHUDr+ddWD1FEm7qFpipamH7mcznmcfSaEqvILz8V36q8bRCjgHksY1TR9rJBa4RFzGvzyUclbtkvqm1KNN9VqEREKFKjw1JtBfPeSqcm+ciYmREl0r/RgI14Z7XyghJi9CxRdggcQonCfQSDcNfuvasJAd+prRmAUue/MRqbtgyS5rfUiEX5U4H5Futi9ri4vhVUc6seNYGPuxcf42/KGUFspkDJwW7nKSNRkf+diV7OfGLLR75YU4r5T6jFx/Jl+cTN++xCGhBGYa97FwI8+NMQCnACERC1hVXADuVGCQGvh68xpuPgFdOwtdLEONol94g=
+  gem: danger-cobertura
+  on:
+    branch: master
+    rvm: 2.5
