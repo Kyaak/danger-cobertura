@@ -92,7 +92,7 @@ module Danger
 
         it "does not add if filename missing prefix" do
           # sub_folder/sub_two.py in xml
-          @dangerfile.git.stubs(:added_files).returns(%w(my_prefix_dir/sub_folder/sub_two.py))
+          @dangerfile.git.stubs(:added_files).returns(%w(not_including/sub_folder/sub_two.py))
           expect(@my_plugin.filename_prefix).to be_nil
 
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
@@ -232,7 +232,7 @@ module Danger
         end
 
         it "does not show coverage if filename prefix missing" do
-          @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @dangerfile.git.stubs(:added_files).returns(%w(not_including/sub_folder/sub_two.py))
           expect(@my_plugin.filename_prefix).to be_nil
 
           @my_plugin.show_coverage
