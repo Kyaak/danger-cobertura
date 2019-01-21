@@ -1,9 +1,13 @@
 [![Gem Version](https://badge.fury.io/rb/danger-cobertura.svg)](https://badge.fury.io/rb/danger-cobertura)
+[![Gem](https://img.shields.io/gem/dt/danger-cobertura.svg)](https://rubygems.org/gems/danger-cobertura)
+[![Inline docs](http://inch-ci.org/github/Kyaak/danger-cobertura.svg?branch=master)](http://inch-ci.org/github/Kyaak/danger-cobertura)
 [![Build Status](https://travis-ci.org/Kyaak/danger-cobertura.svg?branch=master)](https://travis-ci.org/Kyaak/danger-cobertura)
 [![Maintainability](https://api.codeclimate.com/v1/badges/2e657e2a49ddf9696ece/maintainability)](https://codeclimate.com/github/Kyaak/danger-cobertura/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/2e657e2a49ddf9696ece/test_coverage)](https://codeclimate.com/github/Kyaak/danger-cobertura/test_coverage)
-[![Inline docs](http://inch-ci.org/github/Kyaak/danger-cobertura.svg?branch=master)](http://inch-ci.org/github/Kyaak/danger-cobertura)
-[![Gem](https://img.shields.io/gem/dt/danger-cobertura.svg)](https://rubygems.org/gems/danger-cobertura)
+[![Sonarcloud Maintainability](https://sonarcloud.io/api/project_badges/measure?project=Kyaak_danger-cobertura&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Kyaak_danger-cobertura)
+[![Sonarcloud Reliability](https://sonarcloud.io/api/project_badges/measure?project=Kyaak_danger-cobertura&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=Kyaak_danger-cobertura)
+[![Sonarcloud Security](https://sonarcloud.io/api/project_badges/measure?project=Kyaak_danger-cobertura&metric=security_rating)](https://sonarcloud.io/dashboard?id=Kyaak_danger-cobertura)
+[![Sonarcloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=Kyaak_danger-cobertura&metric=coverage)](https://sonarcloud.io/dashboard?id=Kyaak_danger-cobertura)
 
 # danger-cobertura
 
@@ -102,7 +106,7 @@ __`report`__ - Path to the cobertura xml report, e.g. `build/reports/coverage.xm
 
 __`additional_headers`__ - Array of symbols to include in the coverage report. Available options are `:line`, `:branch`
 
-__`filename_prefix`__ - Path prefix to be added to the cobertura class filename attribute. e.g. `src/main/java`
+__`filename_prefix`__ - Path prefix to be added to both, the cobertura issue filename and the git filename attribute. e.g. `src/main/java`, `/Users/buid/workspace/project` 
 
 ## Methods
 

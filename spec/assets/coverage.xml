@@ -271,6 +271,41 @@
 						<line hits="1" number="83"/>
 					</lines>
 				</class>
+				<class branch-rate="0.75" complexity="0" filename="my_prefix_dir/sub_folder/sub_two.py" line-rate="0.9333" name="sub_two.py">
+					<methods/>
+					<lines>
+						<line hits="1" number="13"/>
+						<line hits="1" number="14"/>
+						<line hits="1" number="17"/>
+						<line hits="1" number="22"/>
+						<line hits="1" number="23"/>
+						<line hits="1" number="24"/>
+						<line hits="1" number="25"/>
+						<line hits="1" number="26"/>
+						<line hits="1" number="27"/>
+						<line hits="1" number="28"/>
+						<line hits="1" number="30"/>
+						<line hits="1" number="35"/>
+						<line hits="1" number="37"/>
+						<line hits="1" number="42"/>
+						<line hits="1" number="44"/>
+						<line hits="0" number="49"/>
+						<line hits="1" number="51"/>
+						<line hits="1" number="56"/>
+						<line branch="true" condition-coverage="50% (1/2)" hits="1" missing-branches="58" number="57"/>
+						<line hits="0" number="58"/>
+						<line hits="1" number="59"/>
+						<line hits="1" number="61"/>
+						<line hits="1" number="66"/>
+						<line hits="1" number="68"/>
+						<line hits="1" number="73"/>
+						<line branch="true" condition-coverage="100% (2/2)" hits="1" number="74"/>
+						<line hits="1" number="75"/>
+						<line hits="1" number="76"/>
+						<line hits="1" number="78"/>
+						<line hits="1" number="83"/>
+					</lines>
+				</class>
 				<class branch-rate="0" complexity="0" filename="sub_folder/sub_three.py" line-rate="0" name="sub_three.py">
 					<methods/>
 					<lines>
