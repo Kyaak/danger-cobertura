@@ -122,7 +122,7 @@ module Danger
     # @return [Array<CoverageItem>] Filtered array of items
     def filtered_items
       @filtered_items ||= coverage_items.select do |item|
-        target_files.include?(item_filename(item)) && !item.name.include?("$")
+        (include_item_prefix?(item) || include_target_prefix?(item)) && !item.name.include?("$")
       end
     end
 
@@ -130,13 +130,35 @@ module Danger
     #
     # @param item [CoverageItem] Coverage item to create the full filename.
     # @return [String] Combined filename.
-    def item_filename(item)
-      result = "".dup
+    def include_item_prefix?(item)
+      prefixed = "".dup
       if filename_prefix
-        result << filename_prefix
-        result << "/" unless filename_prefix.chars.last == "/"
+        prefixed << filename_prefix
+        prefixed << "/" unless filename_prefix.chars.last == "/"
       end
-      result << item.filename
+      prefixed << item.filename
+
+      result = false
+      target_files.each do |target_file|
+        result = target_file.eql?(prefixed)
+        break if result
+      end
+      result
+    end
+
+    def include_target_prefix?(item)
+      result = false
+      target_files.each do |target_file|
+        prefixed = "".dup
+        if filename_prefix
+          prefixed << filename_prefix
+          prefixed << "/" unless filename_prefix.chars.last == "/"
+        end
+        prefixed << target_file
+        result = prefixed.eql?(item.filename)
+        break if result
+      end
+      result
     end
 
     # A getter for current modified and added files.

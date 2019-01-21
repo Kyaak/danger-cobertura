@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2019-01-21
+### Changed
+- `filename_prefix` will be checked by adding the prefix to the _git_ and the _issue_ filename [Issue](https://github.com/Kyaak/danger-cobertura/issues/6)  
+
 ## [1.1.1] - 2018-11-28
 ### Fixed
 - Add * wildcard to have parameters in `show_coverage` due to `danger local` bug [Issue](https://github.com/danger/danger/issues/1041)

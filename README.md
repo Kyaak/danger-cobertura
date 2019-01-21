@@ -106,7 +106,7 @@ __`report`__ - Path to the cobertura xml report, e.g. `build/reports/coverage.xm
 
 __`additional_headers`__ - Array of symbols to include in the coverage report. Available options are `:line`, `:branch`
 
-__`filename_prefix`__ - Path prefix to be added to the cobertura class filename attribute. e.g. `src/main/java`
+__`filename_prefix`__ - Path prefix to be added to both, the cobertura issue filename and the git filename attribute. e.g. `src/main/java`, `/Users/buid/workspace/project` 
 
 ## Methods
 

@@ -8,12 +8,12 @@ module Danger
       expect(Danger::DangerCobertura.new(nil)).to be_a Danger::Plugin
     end
 
-    SUB_ONE = %w(sub_folder/sub_one.py)
-    SUB_TWO = %w(sub_folder/sub_two.py)
-    SUB_THREE = %w(sub_folder/sub_three.py)
-    SUB_TWO_WARNING = 'sub_two.py has less than 90.0% coverage'
-    PREFIX = 'my_prefix_dir'
-    PREFIX_TWO = %w(my_prefix_dir/sub_folder/sub_two.py)
+    SUB_ONE = %w(sub_folder/sub_one.py).freeze
+    SUB_TWO = %w(sub_folder/sub_two.py).freeze
+    SUB_THREE = %w(sub_folder/sub_three.py).freeze
+    SUB_TWO_WARNING = "sub_two.py has less than 90.0% coverage".freeze
+    PREFIX = "my_prefix_dir".freeze
+    PREFIX_TWO = %w(my_prefix_dir/sub_folder/sub_two.py).freeze
 
     describe "with Dangerfile" do
       before do
@@ -22,6 +22,12 @@ module Danger
         @my_plugin.report = "#{File.dirname(__FILE__)}/assets/coverage.xml"
         @dangerfile.git.stubs(:modified_files).returns([])
         @dangerfile.git.stubs(:added_files).returns([])
+      end
+
+      it "test" do
+        @dangerfile.git.stubs(:modified_files).returns(["Filmustage.DataApi/Filmustage.DataApi/DataAccess/Location.cs"])
+        @my_plugin.filename_prefix = "/Users/Martin/Desktop/filmustage-dataapi"
+        @my_plugin.show_coverage
       end
 
       describe "warn_if_file_less_than" do
@@ -94,8 +100,16 @@ module Danger
           expect(@dangerfile.status_report[:warnings]).not_to include(SUB_TWO_WARNING)
         end
 
-        it "does add if filename prefix set" do
+        it "does add if issue filename prefix set" do
           @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @my_plugin.filename_prefix = PREFIX
+          @my_plugin.warn_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:warnings]).to include(SUB_TWO_WARNING)
+        end
+
+        it "does add if git filename prefix set" do
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
           @my_plugin.filename_prefix = PREFIX
           @my_plugin.warn_if_file_less_than(percentage: 90.0)
 
@@ -226,8 +240,16 @@ module Danger
           expect(@dangerfile.status_report[:markdowns]).to be_empty
         end
 
-        it "does show coverage if filename prefix matches" do
+        it "does show coverage if issue filename prefix matches" do
           @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @my_plugin.filename_prefix = PREFIX
+          @my_plugin.show_coverage
+
+          expect(@dangerfile.status_report[:markdowns]).not_to be_empty
+        end
+
+        it "does show coverage if git filename prefix matches" do
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
           @my_plugin.filename_prefix = PREFIX
           @my_plugin.show_coverage
 
