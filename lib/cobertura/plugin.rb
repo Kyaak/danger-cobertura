@@ -44,6 +44,18 @@ module Danger
       end
     end
 
+    # Fail if a modified file has a lower total coverage than defined.
+    #
+    # @param percentage [Float] The minimum code coverage required for a file.
+    # @return [Array<String>] Fail warnings of files with a lower coverage.
+    def fail_if_file_less_than(percentage:)
+      filtered_items.each do |item|
+        next unless item.total_percentage < percentage
+
+        fail "#{item.name} has less than #{percentage}% coverage"
+      end
+    end
+
     # Show markdown table of modified and added files.
     # TODO remove * wildcard to accept all parameter: `danger local` bug - https://github.com/danger/danger/issues/1041
     # @return [Array<String>] A markdown report of modified files and their coverage report.
