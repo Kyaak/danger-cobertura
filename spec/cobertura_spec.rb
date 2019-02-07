@@ -264,6 +264,109 @@ module Danger
           expect(@dangerfile.status_report[:markdowns]).not_to be_empty
         end
       end
+
+      describe "fail_if_file_less_than" do
+        it "raises error if file attribute is nil" do
+          @my_plugin.report = nil
+          expect do
+            @my_plugin.fail_if_file_less_than(percentage: 50.0)
+          end.to raise_error(DangerCobertura::ERROR_FILE_NOT_SET)
+        end
+
+        it "raises error if file attribute is empty" do
+          @my_plugin.report = ""
+          expect do
+            @my_plugin.fail_if_file_less_than(percentage: 50.0)
+          end.to raise_error(DangerCobertura::ERROR_FILE_NOT_SET)
+        end
+
+        it "raises error if file is not found" do
+          @my_plugin.report = "cant/find/my/file.xml"
+          expect do
+            @my_plugin.fail_if_file_less_than(percentage: 50.0)
+          end.to raise_error(/#{@my_plugin.report}/)
+        end
+
+        it "adds fail if total coverage lower than given" do
+          @dangerfile.git.stubs(:modified_files).returns(%w(sub_folder/sub_two.py top_level_one.py))
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).to include(SUB_TWO_WARNING)
+          expect(@dangerfile.status_report[:errors]).not_to include("top_level_one.py has less than 90.0% coverage")
+        end
+
+        it "does not add warn if coverage not" do
+          @dangerfile.git.stubs(:modified_files).returns(SUB_TWO)
+          @my_plugin.fail_if_file_less_than(percentage: 10.0)
+
+          expect(@dangerfile.status_report[:errors]).to be_empty
+        end
+
+        it "adds warn for modified files" do
+          @dangerfile.git.stubs(:modified_files).returns(SUB_TWO)
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).to include(SUB_TWO_WARNING)
+        end
+
+        it "adds warn for added files" do
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).to include(SUB_TWO_WARNING)
+        end
+
+        it "adds warn for added and modified files" do
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
+          @dangerfile.git.stubs(:modified_files).returns(SUB_ONE)
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).to include(SUB_TWO_WARNING)
+          expect(@dangerfile.status_report[:errors]).to include("sub_one.py has less than 90.0% coverage")
+        end
+
+        it "does not add if filename missing prefix" do
+          # sub_folder/sub_two.py in xml
+          @dangerfile.git.stubs(:added_files).returns(%w(not_including/sub_folder/sub_two.py))
+          expect(@my_plugin.filename_prefix).to be_nil
+
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).not_to include(SUB_TWO_WARNING)
+        end
+
+        it "does add if issue filename prefix set" do
+          @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @my_plugin.filename_prefix = PREFIX
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).to include(SUB_TWO_WARNING)
+        end
+
+        it "does add if git filename prefix set" do
+          @dangerfile.git.stubs(:added_files).returns(SUB_TWO)
+          @my_plugin.filename_prefix = PREFIX
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).to include(SUB_TWO_WARNING)
+        end
+
+        it "ignores filename prefix slash" do
+          @dangerfile.git.stubs(:added_files).returns(PREFIX_TWO)
+          @my_plugin.filename_prefix = "#{PREFIX}/"
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).to include(SUB_TWO_WARNING)
+        end
+
+        it "should not add name with $" do
+          @dangerfile.git.stubs(:added_files).returns(SUB_THREE)
+          @my_plugin.fail_if_file_less_than(percentage: 90.0)
+
+          expect(@dangerfile.status_report[:errors]).to include("sub_three.py has less than 90.0% coverage")
+          expect(@dangerfile.status_report[:errors]).not_to include("sub_three$.py has less than 90.0% coverage")
+        end
+      end
     end
   end
 end
